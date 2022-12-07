@@ -19,7 +19,7 @@ public:
 };
 
 template <class T>
-Node<T>::Node(const T& item, Node<T>* ptrnext) : data{ item }, next{ ptrenext } {};
+Node<T>::Node(const T& item, Node<T>* ptrnext) : data{ item }, next{ ptrnext } {};
 
 // возвратить заркытый член next
 template <class T>

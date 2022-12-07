@@ -1,126 +1,153 @@
-#pragma once
-#include <iostream>
-#ifndef NULL
-const int NULL = 0;
-#endif // !NUll
+п»ї#pragma once
+
+# include <iostream>
+# include <stdlib.h>
 
 enum ErrorType
 {
-	invalidArraySize, memoryAllocationError, indexOutOfRange
+	invalidArraysize, memoryAllocationError, indexOutOfRange
 };
-const char* errorMsg[] = {
-	"Неверный размер массива", "Ошибка выделения памяти", "Неверный индекс: "
-};
-template <class T>
-class Array
-{
-private: 
-	// динамически выделяемый список размером size
-	T* alist;
-	int size;
 
-	// метод обработки ошибок
-	void Error(ErrorType error, int badIndex = 0) const {
-		std::cerr << "Ошибка" << errorMsg[error];
-		exit(1);
-	}
+
+const char* errorMsg[] = {
+	"РќРµРІРµСЂРЅС‹Р№ СЂР°Р·С‹РµСЂ РјР°СЃСЃРёРІР°", "РћС€РёР±РєР° РІС‹РґРµР»РµРЅРёСЏ nР°РјСЏС‚Рё", "РќРµРІРµСЂРЅС‹Р№ РёРЅРґРµРєСЃ: "
+};
+
+// С€Р°Р±Р»РѕРЅРЅС‹Р№ РєР»Р°СЃСЃ РјР°СЃСЃРёРІР°
+template <class T>
+class Array {
+private:
+	// РґРёРЅР°С‹РёС‡РµСЃРєРё РІС‹РґРµР»СЏРµРјС‹Р№ СЃnРёСЃРѕРє СЂР°Р·РјРµСЂРѕРј size
+	T* alist; 
+	int size;
+	// РјРµС‚РѕРґ РѕРћСЂР°Р±РѕС‚РєРё РѕС€РёР±РѕРє 
+	void Error(ErrorType error, int badIndex = 0) const;
 
 public:
-	// конструкторы и деструктор
+	// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
 	Array(int sz = 50);
-	Array(const Array<T>& A);
-	~Array(void);
+	// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ
+	Array(const Array<T>& Рђ);
+	// РґРµСЃС‚СЂСѓРєС‚РѕСЂ
+	~Array();
 
-	// присваивание, индексация и преобразование указателя
-	Array<T>& operator= (const Array<T>& rhs);
-	T& operator[](int i);
-	operator T* (void) const;
+	// РїРµСЂРµРіСЂСѓР·РєР° РїСЂРёСЃРІР°РёРІР°РЅРёСЏ
+	Array<T>& operator = (const Array<T>& rhs); 
+	// РїРµСЂРµРіСЂСѓР·РєР° РёРЅРґРµРєСЃРЅРѕРіРѕ РѕРїРµСЂР°С‚РѕСЂР°
+	T& operator [] (int i);
+	// РїРµСЂРµРіСЂСѓР·РєР° СѓРєР°Р·Р°С‚РµР»СЏ
+	operator T* () const;
 
-	// операции с размером массива
-	int ListSize(void) const;	// читать size
-	void Resize(int sz;)		// обновлять size
+	// РѕРїРµСЂР°С†РёРё СЃ СЂР°Р·РјРµСЂРѕС‹ С‹Р°СЃСЃРёРІР° 
+	int ListSize() const;		// С‡РёС‚Р°С‚СЊ size
+	void Resize(int sz);		// РѕР±РЅРѕРІР»СЏС‚СЊ size
 };
 
+
 template<class T>
-inline Array<T>::Array(int sz) {
-	// проверка на наличие параметра неверного размера
+void Array<T>::Error(ErrorType error, int badIndex) const {
+	if (badIndex != 0) {
+		std::cerr << errorMsg[error] << std::endl;
+		exit(1);
+	}
+	else {
+		std::cerr << errorMsg[error] << badIndex << std::endl;
+		exit(1);
+	}
+}
+
+
+template<class T>
+Array<T>::Array(int sz) {
+	// РїСЂРѕРІРµСЂРєР° РЅР° РЅР°Р»РёС‡РёРµ РїР°СЂР°РјРµС‚СЂР° РЅРµРІРµСЂРЅРѕРіРѕ СЂР°Р·РјРµСЂР° 
 	if (sz <= 0)
-		Error(invalidArraySize);
-	// присваивание размера и выделение памяти
+		Error(invalidArraysize);
+	// nСЂРёСЃРІР°РёРІР°РЅРёРµ СЂР°Р·РјРµСЂР° Рё РІС‹РґРµР»РµРЅРёРµ РїР°РјСЏС‚Рё 
 	size = sz;
 	alist = new T[size];
-	// убеждаемся в том, что система выделяет необходимую память,
-	if (alist == NULL)
+	// СѓР±РµР¶РґР°РµРјСЃСЏ РІ С‚РѕРј, С‡С‚Рѕ СЃРёСЃС‚РµРјР° РІС‹РґРµР»СЏРµС‚ РЅРµРѕР±С…РѕРґРёРјСѓСЋ РїР°РјСЏС‚СЊ,
+	if (alist == NULL) 
 		Error(memoryAllocationError);
 }
 
-// деструтор
+
 template<class T>
-Array<T>::~Array(void)
-{
+Array<T>::~Array() {
 	delete[] alist;
 }
-// конструктор копирования
-template <class T>
+
+
+template<class T>
 Array<T>::Array(const Array<T>& X) {
-	// получить размер объекта и присовить текущему объекту
-	int n = X.size;
+	// РїРѕР»СѓС‡РёС‚СЊ СЂР°Р·wРµСЂ РѕР±СЉРµРєС‚Р° РҐ Рё РїСЂРёСЃРІРѕРёС‚СЊ С‚РµРєСѓС‰РµwСѓ РѕР±СЉРµРєС‚Сѓ
+	int n = X.size; 
 	size = n;
-	alist = new T[n]; // динамически созданный массив
+	// РІС‹РґРµР»РёС‚СЊ РЅРѕРІСѓСЋ РїР°РјСЏС‚СЊ РґРїСЏ РѕР±СЉРµРєС‚Р° СЃ РїСЂРѕРІРµСЂРєРѕР№ 
+	// РІРѕР·РјРѕР¶РЅС‹С… РѕС€РёР±РѕРє
+	alist = new T[n];
 	if (alist == NULL)
 		Error(memoryAllocationError);
-	T* srcptr = X.alist; // адрес начала X.alist
-	T* destptr = alist;	 // адрес начала alist
-	while (n--) // копировать список
+
+	// РєРѕР»РёСЂРѕРІР°С‚СЊ СЌР»РµРјРµРЅС‚С‹ РјР°СЃСЃРёРІР° РѕР±СЉРµРєС‚Р° РҐ РІ С‚РµРєСѓРїРѕ,пїЅР№ РѕР±СЉРµРєС‚
+	T* srcptr = X.alist;	// Р°РґСЂРµСЃ РЅР°С‡Р°Р»Р° X.aliР·t 
+	T* destptr = alist;		// Р°РґСЂРµСЃ РЅР°С‡Р°Р»Р° alist 
+	while (n--)				// РєРѕРїРёСЂРѕРІР°С‚СЊ СЃРїРёСЃРѕРє 
 		*destptr++ = *srcptr++;
 }
-template <class T>
-Array<T>& Array<T>::operator=(const Array<T>& rhs) {
-	return Array(rhs);
+
+
+template<class T>
+T& Array<T>::operator [] (int n) {
+	// Р°С‹nРѕР»РЅРµРЅРёРµ РїСЂРѕРІРµСЂРєРё РіСЂР°РЅРёС† РјР°СЃСЃРёРІР° 
+	if (n < 0 && n > size - 1)
+		Error(indexOutOfRange, n);
+	// РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ СЌР»РµРјРµРЅС‚ РёР· Р·Р°РєСЂС‹С‚РѕРіРѕ СЃРїРёСЃРєР° РјР°СЃСЃРёРІР°
+	return alist[n]; 
 }
 
-template <class T>
-T& Array<T>::operator[](int i) {
-	if (i < size && i >= 0)
-		return alist[i];
-	else
-		Error(indexOutOfRange);
+
+template<class T>
+Array<T>::operator T* () const {
+	// РІРѕР·РІСЂР°С‰Р°РµС‚ Р°РґСЂРµСЃ Р·Р°РєСЂС‹С‚РѕРіРѕ РјР°СЃСЃРёРІР° РІ С‚РµРєСѓС‰РµРј РѕРћСЉРµРєС‚Рµ
+	return alist; 
 }
 
-template <class T>
-Array<T>:: operator T* () const {
-	// возвращает адресс закрытого массива в текущем объекте
-	return alist;
+
+template<class T>
+int Array<T>::ListSize() const {
+	return size;
 }
 
-template <class T>
+
+template<class T>
 void Array<T>::Resize(int sz) {
-	// проверка нового размера массива
+	// РїСЂРѕРІРµСЂРєР° РЅРѕРІРѕРіРѕ СЂР°Р·РјРµСЂР° РјР°СЃСЃРёРІР°; 
+	// РІС‹С…РѕРґ РёР· РїСЂРѕРіСЂР°РјРјС‹ РїСЂРё sz <= 0 
 	if (sz <= 0)
-		Error(invalidArraySize);
-	// ничего не делать, если размер не изменился
+		Error(invalidArraysize);
+
+	// РЅРёС‡РµРіРѕ РЅРµ РґРµР»Р°С‚СЊ, РµСЃР»Рё СЂР°Р·РјРµСЂ РЅРµ РёР·РјРµРЅРёР»СЃСЏ
 	if (sz == size)
 		return;
-	// запросить память для нового массива и проверить ответ системы
-	T* newlist = new T[sz];
+
+	// Р·Р°РїСЂРѕСЃРёС‚СЊ РїР°РјСЏС‚СЊ РґР»СЏ РЅРѕРІРѕРіРѕ РјР°СЃСЃРёРІР° Рё РїСЂРѕРІРµСЂРёС‚СЊ РѕС‚РІРµС‚ СЃРёСЃС‚РµNР«
+	T* newlist = new T[sz]; 
 	if (newlist == NULL)
 		Error(memoryAllocationError);
-	// объявить n и инициализировать значение sz или size
-	int n = (sz <= size) ? sz : size;
-	T* srcptr = X.alist; // адрес начала X.alist
-	T* destptr = alist;	 // адрес начала alist
-	while (n--)			// копировать список
+
+	// РѕРѕСЉСЏРІРёС‚СЊ n Рё РёРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°С‚СЊ Р·РЅР°С‡РµРЅРёРµРј sz РёР»Рё Р·ize 
+	int n =(sz <= size) ? sz : size;
+	// РєРѕР»РёСЂРѕРІР°С‚СЊ n СЌР»РµРјРµРЅС‚РѕРІ РјР°СЃСЃРёРІР° РёР· СЃС‚Р°СЂРѕР№ РІ РЅРѕРІСѓСЋ РїР°РјСЏС‚СЊ 
+	T* srcptr = alist;			// Р°РґСЂРµСЃ РЅР°С‡Р°Р»Р° alist
+	T* destptr = newlist;		// Р°РґСЂРµСЃ РЅР°С‡Р°Р»Р° newliР·t
+								
+	while (n--)					// РєРѕР»РёСЂРѕРІР°С‚СЊ СЃРїРёСЃРѕРє 
 		*destptr++ = *srcptr++;
 
-	// удалить старый список
+	// СѓРґР°Р»РёС‚СЊ СЃС‚Р°СЂС‹Р№ СЃРїРёСЃРѕРє 
 	delete[] alist;
-	
-	// переустановить alist, чтобы он указывал на newlist
-	// и обновить член класса size
+	// РїРµСЂРµСѓСЃС‚Р°РЅРѕРІРёС‚СЊ alist, С‡С‚РѕР±С‹ РѕРЅ СѓРєР°Р·С‹РІР°Р» РЅР° newlist Рё РѕР±РЅРѕРІРёС‚СЊ С‡Р»РµРЅ РєР»Р°СЃСЃР° size 
 	alist = newlist;
 	size = sz;
-}
-template<class T>
-int Array<T>::ListSize() const{
-	return size;
+
 }

@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "b0a26abc-72e5-49a3-961e-930a70af843e": {
+      "ProjectGuid": "b0a26abc-72e5-49a3-961e-930a70af843e",
+      "DisplayName": "HashTableLab",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}

@@ -1,334 +1,381 @@
 #pragma once
-#include<iostream>
+
+#include <iostream>
+#include <stdlib.h>
 #include "Node.h"
+
 using namespace std;
+
 template <class T>
-class LinkedList {
+class LinkedList
+{
+	template <class> friend class SeqListIterator;		//  friend class - отстой
+
 private:
-	// указатели для доступа к началу и концу списка
+	// указатели для доступа к началу и концу списка 
 	Node<T>* front, * rear;
-	
 	// используются для извлечения, вставки и удаления данных
 	Node<T>* prevPtr, * currPtr;
-	
-	// число элементов в списке
+	// число элементов в списке 
 	int size;
-
-	// положение в списке. используется методом Reset
+	// положение в списке. используется методом Reset 
 	int position;
 
-	// закрытые методы для создания и удаления узлов
+	// создание узла
 	Node<T>* GetNode(const T& item, Node<T>* ptrNext = NULL);
-	void FreeNode(Node<T>* p);
-
-	// копирует список L в текущий список
+	// очистка узла
+	void FreeNode(Node<T>* pl);
+	// колирует список L в текущий список 
 	void CopyList(const LinkedList<T>& L);
-
-public:
-
-	// констуктор
+	
+public:	
+	// конструктор 
 	LinkedList();
+	// конструктор 
 	LinkedList(const LinkedList<T>& L);
-
-	// деструктор
+	// деструктор 
 	~LinkedList();
 
-	// оператор присваивания
-	LinkedList<T>& operator=(const LinkedList<T>& L);
-
-	// проверка сотсояния списка
+	// проверка состояния списка 
 	int ListSize() const;
+	// проверка на пустоту
 	int ListEmpty() const;
 
-	// методы прохождения списка
+	// установление position в положение pos
 	void Reset(int pos = 0);
+	// переход к след. узлу
 	void Next();
-	int EndOfList() const;
+	// проверка, дошли ли до конца списка
+	bool EndOfList() const;
+	// возврат position
 	int CurrentPosition() const;
-	
-	// методы вставки
+
+	// вставить вначале
 	void InsertFront(const T& item);
+	// вставить в конец
 	void InsertRear(const T& item);
+	// вставить на какую-то позицию
 	void InsertAt(const T& item);
 	void InsertAfter(const T& item);
 
-	// методы удаления
+	// методы удаления 
 	T DeleteFront();
+	// удаление какого-то элемента
 	void DeleteAt();
 
-	// возвратить/изменить данные
+	// возвратить/изменить данные 
 	T& Data();
-
-	// очистка списка
+	// очистка списка 
 	void ClearList();
+	LinkedList<T>& operator = (const LinkedList<T>& L);
 };
 
+/*----------реализация этой шляпы----------*/
+
 template <class T>
-LinkedList<T>::LinkedList() : front{ NULL }, rear{ NULL }, prevPtr{ NULL },
-currPtr{ NULL }, size{ 0 }, position{ -1 } {}
+Node<T>* LinkedList<T>::GetNode(const T& item, Node<T>* ptrNext) {
+	Node<T>* temp = new Node<T>(item, ptrNext);
+	return temp;
+};
+
+
+template <class T>
+void LinkedList<T>::FreeNode(Node<T>* pl) {
+	delete pl;
+};
+
 
 template <class T>
 void LinkedList<T>::CopyList(const LinkedList<T>& L) {
-	// p - указатель на L
+	// р - указатель на L
 	Node<T>* p = L.front;
 	int pos;
-	
+	// вставлять каждый элемент из L в конец текущего объекта 
 	while (p != NULL) {
 		InsertRear(p->data);
 		p = p->NextNode();
 	}
 
+	// выход, если список пустой
 	if (position == -1)
 		return;
 
-	// переустановить prevPtr и currPtr в новом списке 
+	// nереустановить prevPtr и currPtr в новом списке
 	prevPtr = NULL;
 	currPtr = front;
-	for (pos = 0; pos != position; pos++)
-	{
+	for (pos = 0; pos != position; pos++) {
 		prevPtr = currPtr;
 		currPtr = currPtr->NextNode();
 	}
-}
+};
 
-template<class T>
-void LinkedList<T>::ClearList(void) {
-	Node<T>* currPosition, * nextPosition;
-	currPosition = front;
-	while (currPosition != NULL)
-	{
-		nextPosition = currPosition->NextNode();
-		FreeNode(currPosition);
-		currPosition = nextPosition;
-	}
-	front = rear = NULL;
-	prevPtr = currPtr = NULL;
+
+template <class T>
+LinkedList<T>::LinkedList() {
+	front = nullptr;
+	rear = nullptr;
+	prevPtr = nullptr;
+	currPtr = nullptr;
 	size = 0;
 	position = -1;
-}
+};
 
-template<class T>
-void LinkedList<T>::Reset(int pos)
-{
+
+template <class T>
+LinkedList<T>::LinkedList(const LinkedList<T>& L) {
+	CopyList(L);
+};
+
+
+template <class T>
+LinkedList<T>::~LinkedList(void) {
+	delete front;
+	delete rear;
+};
+
+
+// оператор присваивания
+template <class T>
+LinkedList<T>& LinkedList<T>::operator = (const LinkedList<T>& L) {
+	CopyList(L);	//копируем список из входного
+	return *this;	//возвращаем этот список
+};
+
+
+template <class T>
+int LinkedList<T>::ListSize(void) const {
+	return size;
+};
+
+
+template <class T>
+int LinkedList<T>::ListEmpty(void) const {
+	return size == 0;
+};
+
+
+template <class T>
+void LinkedList<T>::Reset(int pos) {
 	int startPos;
-
+	// если список пустой, выход 
 	if (front == NULL)
 		return;
-
-	if (pos < 0 || pos >size - 1) {
-		cerr << "Reset: Неверно задано положение: " << pos << endl;
+	// если положение задано не верно, закончить программу
+	if (pos < 0 || pos > size - 1)
+	{
+		cerr << "Reset: Неверно задано положение: " << pos << std::endl;
 		return;
 	}
-
-	if (pos == 0)
-	{
+	// установить механизм nрохоЖдения в pos
+	if (pos == 0) {
+		// перейти в начало списка
 		prevPtr = NULL;
 		currPtr = front;
 		position = 0;
 	}
 	else
+		// nереустановить currPtr, prevPtr, и startPos 
 	{
 		currPtr = front->NextNode();
 		prevPtr = front;
 		startPos = 1;
+		// передвигаться вправо до pos 
 		for (position = startPos; position != pos; position++) {
+			// передвинуть оба указателя прохождения вперед
 			prevPtr = currPtr;
 			currPtr = currPtr->NextNode();
 		}
 	}
-}
+};
 
-template<class T>
-void LinkedList<T>::Next() {
-	if (currPtr != NULL)
-	{
+
+template <class T>
+void LinkedList<T>::Next(void) {
+	// выйти, если конец списка или // список пустой 
+	if (currPtr != NULL) {
+		// nереустановить два указателя на один узел вперед
 		prevPtr = currPtr;
 		currPtr = currPtr->NextNode();
 		position++;
 	}
+};
+
+
+template <class T>
+bool LinkedList<T>::EndOfList() const {
+	return (position == size);
+};
+
+
+template <class T>
+int LinkedList<T>::CurrentPosition(void) const {
+	return position;
+};
+
+
+template<typename T>
+void LinkedList<T>::InsertFront(const T& item) {
+	Node<T>* newNode; //новый узел
+	newNode = GetNode(item, front); //передаём в него значение и адрес начала
+	front = newNode; //указываем на новый узел
+	currPtr = front; //обновляем текущий указатель
+	position = 0; //обновляем позицию
+	size++; //увеличиваем размер
 }
 
-template<class T>
-T& LinkedList<T>::Data() {
-	if (size == 0 || currPtr == NULL)
-	{
-		cerr << "Data: Неверная ссылка!" << endl;
-		exit(1);
+
+template<typename T>
+void LinkedList<T>::InsertRear(const T& item) {
+	Node<T>* newNode; //новый узел
+	this->currPtr = this->front;
+	this->position = 0;
+	//если список пуст, вставить item в начало
+	if (this->currPtr == NULL)
+		this->InsertFront(item);
+	else {
+		//найти узел с нулевым указателем
+		while (this->currPtr->NextNode() != NULL)
+			this->Next();
+		// создать узел и вставить в конец списка (после currPtr)
+		newNode = this->GetNode(item, this->rear);
+		this->currPtr->InsertAfter(newNode);
+		this->size++;
 	}
-	return currPtr->data;
 }
+
 
 template <class T>
 void LinkedList<T>::InsertAt(const T& item) {
 	Node<T>* newNode;
-	if (prevPtr == NULL)
-	{
+	// два случая: вставка в начало или внутрь списка
+	if (prevPtr == NULL) {
+		// вставка в начало списка. nоыещает также узел в пустой список 
 		newNode = GetNode(item, front);
 		front = newNode;
 	}
-	else
-	{
+	else {
+		// вставка внутрь списка. помещает узел после prevPtr
 		newNode = GetNode(item);
 		prevPtr->InsertAfter(newNode);
 	}
+
+	// при prevPtr == rear, имеем вставку в пустой список 
+	// или в хвост нелустого списка; обновляет rear и positioп
 	if (prevPtr == rear) {
 		rear = newNode;
 		position = size;
 	}
+	// обновить currPtr и увеличить size
 	currPtr = newNode;
 	size++;
-}
+};
 
-template <class T>
-void LinkedList<T>::InsertFront(const T& item) {
-	Node<T>* p = GetNode(item);
-	if (front == NULL)
-	{
-		rear = p;
-		currPtr = p;
-		position = 1;
-	}
-	else {
-		p->InsertAfter(front);	
-	}
-	front = p;
-	size++;
-}
 
-template <class T>
-void LinkedList<T>::InsertRear(const T& item) {
-	Node<T>* p = GetNode(item);
-	if (ListEmpty()) {
-		front = p;
-		rear = p;
-		currPtr = p;
-		position = 1;
-		size = 1;
-	}
-	else
-	{
-		rear->InsertAfter(p);
-		rear = NextNode();
-		size++;
-	}
-}
-
-template <class T>
+template<typename T>
 void LinkedList<T>::InsertAfter(const T& item) {
-	Node<T>* p = GetNode(item);
-	Node<T>* tmp;
-	if (ListEmpty())
-	{
-		cerr << "Ошибка вставки: лист пустой!";
-		exit(1);
+	Node<T>* newNode; //новый узел
+	if (this->front == NULL) { //если список пуст
+		//вставляем его в начало
+		newNode = this->getNode(item, this->front);
+		this->front = newNode;
 	}
 	else {
-		tmp = currPtr->NextNode();
-		currPtr->InsertAfter(p);
-		p->InsertAfter(tmp);
-		size++;
+		if (this->currPtr == this->rear) { //если это хвостовой узел
+			//вставляем в конец списка
+			newNode = this->getNode(item, this->rear);
+			this->prev_ptr->insAfter(newNode);
+		}
+		else {
+			//вставляем после текущего
+			newNode = this->getNode(item, currPtr->nextNode());
+			this->currPtr->insAfter(newNode);
+		}
 	}
+	this->next(); //смещаем позицию
+	this->size++;
 }
 
+
 template <class T>
-T LinkedList<T>::DeleteFront() {
+T LinkedList<T>::DeleteFront() {					// TODO
 	Node<T>* p;
-	if (front == NULL) {
-		cerr << "Ошибка удаления!" << endl;
+	T tmp = NULL;
+
+	// ошибка, если список пустой или конец списка
+	if (currPtr == NULL) {
+		cerr << "Ошибка удаления!" << std::endl;
 		exit(1);
 	}
-	else
+
+	if (front != nullptr)
 	{
 		p = front;
 		front = front->NextNode();
-		FreeNode(p);
-		size--;
+		tmp = p->data;
 	}
-}
+
+	FreeNode(p);
+	return tmp;
+};
+
 
 template <class T>
-void LinkedList<T>::DeleteAt() {
+void LinkedList<T>::DeleteAt(void) {
 	Node<T>* p;
-
-	if (currPtr == NULL)
-	{
-		cerr << "Ошибка удаления!" << endl;
+	// ошибка, если список пустой или конец списка
+	if (currPtr == NULL) {
+		cerr << "Ошибка удаления!" << std::endl;
 		exit(1);
 	}
-	if (prevPtr == NULL)
-	{
+
+	// удалять можно только в начале и внутри списка
+	if (prevPtr == NULL) {
+		// сохранить адрес начала, но не связывать его. если это - последний узел, присвоить front значение NULL 
 		p = front;
 		front = front->NextNode();
 	}
-	else
+	else {
+		// не связывать внутренний узел после prevPtr, запомнить адрес 
 		p = prevPtr->DeleteAfter();
-	if (p == rear)
-	{
+	}
+
+	// если хвост удален, адрес нового хвоста в prevPtr, // а position уыеньwается на 1 
+	if (p == rear) {
 		rear = prevPtr;
 		position--;
 	}
-	currPtr = p->NextNode();
 
+	// установить currPtr на последний удаленный узел. Если р - последний узел в списке, currPtr становится равным NULL 
+	currPtr = p->NextNode();
+	// освободить узел и уменьшить значение size
 	FreeNode(p);
 	size--;
-}
+};
+
 
 template <class T>
-int LinkedList<T>::EndOfList() const{
-	if (currPtr == rear)
-		return 1;
-	else 
-		return 0;
-}
-
-template <class T>
-int LinkedList<T>::CurrentPosition() const {
-	return position;
-}
-
-template <class T>
-int LinkedList<T>::ListSize() const {
-	return size;
-}
-
-template <class T>
-int LinkedList<T>::ListEmpty() const {
-	return (int)(size == 0);
-}
-
-template <class T>
-Node<T>* LinkedList<T>::GetNode(const T& item, Node<T>* ptrNext) {
-	return new Node<T>(item, ptrNext);
-}
-
-template <class T>
-void LinkedList<T>::FreeNode(Node<T>* p) {
-	delete *p;
-}
-
-template <class T>
-LinkedList<T>::LinkedList(const LinkedList<T>& L) {
-	ClearList();
-	if (L.ListEmpty())	
-		this = LinkedList();
-	else
-	{
-		L.currPtr = L.front;
-		while (currPtr != rear)
-		{
-			InsertRear(L.currPtr);
-			currPtr = currPtr->NextNode();
-		}
+T& LinkedList<T>::Data(void) {
+	// ошибка, если список пустой или прохождение закончено
+	if (size == 0 || currPtr == NULL) {
+		cerr << "Data: Неверная ссылка!" << std::endl;
+		exit(1);
 	}
-}
+	return currPtr->data;
+};
+
 
 template <class T>
-LinkedList<T>::~LinkedList() {
-	ClearList();
-}
-
-template <class T>
-LinkedList<T>& LinkedList<T>::operator=(const LinkedList<T>& L) {
-	LinkedList(L);
-}
-
+void LinkedList<T>::ClearList() {
+	Node<T>* currPosition, * nextPosition;
+	currPosition = front;
+	while (currPosition != NULL) {
+		// получить адрес следующего узла и удалить текущий
+		nextPosition = currPosition->NextNode();
+		FreeNode(currPosition);
+		currPosition = nextPosition; // перейти к следующему узлу 
+	}
+	front = rear = NULL;
+	prevPtr = currPtr = NULL;
+	size = 0;
+	position = -1;
+};
