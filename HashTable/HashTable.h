@@ -3,6 +3,7 @@
 #include "List.h"
 #include "Array.h"
 #include "LinkedList.h"
+#include <iostream>
 template<class T>
 class HashTableIterator;
 
@@ -57,14 +58,15 @@ void HashTable<T>::Insert(const T& key) {
 	LinkedList<T>& lst = buckets[hashval];
 
 	for (lst.Reset(); !lst.EndOfList(); lst.Next())
-	{
 		// если ключ совпал, обновить данные и выйти
 		if (lst.Data() == key)
 		{
+			lst.Data() = key;
 			current = &lst.Data();
 			return;
 		}
-	}
+	lst.InsertRear(key);
+	current = &lst.Data();
 }
 
 template <class T>
@@ -76,15 +78,15 @@ int HashTable<T>::Find(const T& key)
 	LinkedList<T>& lst = buckets[hashval];
 
 	// просматривать узлы связаного списка в поиска key
-	for (lst.Reset(); !lst.EndOfList(); lst.Next())
-	{
-		if (lst.Data() == key)
+		for (lst.Reset(); !lst.EndOfList(); lst.Next())
 		{
-			current = &lst.Data();
-			return 1;					// вернуть true
+			if (lst.Data() == key)
+			{
+				current = &lst.Data();
+				return 1;					// вернуть true
+			}
+			return 0;						// иначе вернуть false
 		}
-		return 0;						// иначе вернуть false
-	}
 }
 template <class T>
 void HashTable<T>::Delete(const T& key)
@@ -106,7 +108,7 @@ void HashTable<T>::Delete(const T& key)
 // очищение списка по ключу одного из элементов списка
 template<class T>
 void HashTable<T>::ClearList() {
-	int hashval = int(hf(current) % numBuckets);
+	int hashval = int(hf(*current) % numBuckets);
 	LinkedList<T>& lst = buckets[hashval];		//лист блока
 	lst.ClearList();			// очищение листа
 }
@@ -115,7 +117,7 @@ template <class T>
 void HashTable<T>::Update(const T& key) {
 	int hashval = int(hf(key) % numBuckets);		// индекс блока
 	LinkedList<T>& lst = buckets[hashval];		//лист блока
-	for (lst.Reset(); !lst.EndOfList(); lst.Next())
+	for (lst.Reset(0); !lst.EndOfList(); lst.Next())
 	{
 		if (lst.Data() == key)
 		{

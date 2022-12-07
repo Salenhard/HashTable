@@ -112,12 +112,12 @@ void LinkedList<T>::CopyList(const LinkedList<T>& L) {
 
 template <class T>
 LinkedList<T>::LinkedList() {
-	front = nullptr;
-	rear = nullptr;
-	prevPtr = nullptr;
-	currPtr = nullptr;
+	front = NULL;
+	rear = NULL;
+	prevPtr = NULL;
+	currPtr = NULL;
 	size = 0;
-	position = -1;
+	position = 0;
 };
 
 
@@ -235,7 +235,7 @@ void LinkedList<T>::InsertRear(const T& item) {
 	else {
 		//найти узел с нулевым указателем
 		while (this->currPtr->NextNode() != NULL)
-			this->Next();
+			this->currPtr = this->currPtr->NextNode();
 		// создать узел и вставить в конец списка (после currPtr)
 		newNode = this->GetNode(item, this->rear);
 		this->currPtr->InsertAfter(newNode);

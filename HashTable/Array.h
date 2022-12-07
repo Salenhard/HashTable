@@ -65,6 +65,8 @@ Array<T>::Array(int sz) {
 	// nрисваивание размера и выделение памяти 
 	size = sz;
 	alist = new T[size];
+	for (int i = 0; i < sz; i++)
+		alist[i] = T();
 	// убеждаемся в том, что система выделяет необходимую память,
 	if (alist == NULL) 
 		Error(memoryAllocationError);
@@ -94,6 +96,27 @@ Array<T>::Array(const Array<T>& X) {
 	while (n--)				// копировать список 
 		*destptr++ = *srcptr++;
 }
+
+
+template<class T>
+Array<T>& Array<T>::operator=(const Array<T>& rhs)
+{
+	// получить разwер объекта Х и присвоить текущеwу объекту
+	int n = rhs.size;
+	size = n;
+	// выделить новую память дпя объекта с проверкой 
+	// возможных ошибок
+	alist = new T[n];
+	if (alist == NULL)
+		Error(memoryAllocationError);
+
+	// колировать элементы массива объекта Х в текупо,�й объект
+	T* srcptr = rhs.alist;	// адрес начала X.aliзt 
+	T* destptr = alist;		// адрес начала alist 
+	while (n--)				// копировать список 
+		*destptr++ = *srcptr++;
+}
+
 
 
 template<class T>

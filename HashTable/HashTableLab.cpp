@@ -5,11 +5,16 @@
 using namespace std;
 struct NameRecord
 {
-	string name;
-	int count;
+	string name = "";
+	int count = 0;
+
+	int operator ==(const NameRecord& rhs) {
+		return name == rhs.name;
+	}
 };
 
-unsigned long hash(NameRecord elem)
+
+unsigned long hash1(NameRecord elem)
 {
 	unsigned long hashval = 0;
 	for (int i = 0; i < elem.name.length(); i++)
@@ -17,9 +22,7 @@ unsigned long hash(NameRecord elem)
 	return hashval;
 };
 
-unsigned long hash1(NameRecord elem) {
-	return 1;
-}
+
 
 int main()
 {
@@ -27,6 +30,7 @@ int main()
 	NameRecord rec;
 	string token;
 	HashTable<NameRecord> HF(101, hash1);
+	setlocale(0, "ru");
 	fin.open("strings.dat", ios::in | ios::_Nocreate);
 	if (!fin) {
 		cerr << "Невозможно открыть \"strings.dat\"!" << endl;
