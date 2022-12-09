@@ -8,7 +8,7 @@ private:
 public:
 	T data;							// данные узла списка
 	// конструктор
-	Node(const T& item, Node<T>* ptrnext = NULL);
+	Node(const T& item, Node<T>* ptrnext = nullptr);
 
 	// методы модификации списка
 	void InsertAfter(Node<T>* p);
@@ -44,8 +44,8 @@ Node<T>* Node<T>::DeleteAfter()
 	Node<T>* tempPtr = next;
 
 	// если нет следующего узла, возвратить NULL
-	if (next == NULL)
-		return NULL;
+	if (next == nullptr)
+		return nullptr;
 
 	// текущий узел указывает на узел, следующий за tempPtr.
 	next = tempPtr->next;

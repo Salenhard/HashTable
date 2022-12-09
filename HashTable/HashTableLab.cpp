@@ -5,9 +5,12 @@
 using namespace std;
 struct NameRecord
 {
-	string name = "";
-	int count = 0;
-
+	string name;
+	int count;
+	NameRecord() {
+		name = "";
+		count = 0;
+	}
 	int operator ==(const NameRecord& rhs) {
 		return name == rhs.name;
 	}
@@ -25,7 +28,7 @@ unsigned long hash1(NameRecord elem)
 
 
 int main()
-{
+ {
 	ifstream fin;
 	NameRecord rec;
 	string token;
@@ -49,9 +52,10 @@ int main()
 			HF.Insert(rec);
 		}
 	}
-	HashTableIterator<NameRecord> hiter(HF);
+	
+	HashTableIterator<NameRecord> hiter(HF); 
 
-	for(hiter.Reset(); !hiter.EndOfList(); hiter.Next()){
+	for (hiter.Reset(); !hiter.EndOfList(); hiter.Next()) {
 		rec = hiter.Data();
 		cout << rec.name << ": " << rec.count << endl;
 	}

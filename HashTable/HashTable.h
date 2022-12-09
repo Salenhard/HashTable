@@ -56,15 +56,15 @@ void HashTable<T>::Insert(const T& key) {
 	// lst - псведоним для buckets[hashval].
 	// помогает обойтись без индексов
 	LinkedList<T>& lst = buckets[hashval];
-
-	for (lst.Reset(); !lst.EndOfList(); lst.Next())
-		// если ключ совпал, обновить данные и выйти
-		if (lst.Data() == key)
-		{
-			lst.Data() = key;
-			current = &lst.Data();
-			return;
-		}
+	if (!lst.ListEmpty() ) {
+		for (lst.Reset(); !lst.EndOfList(); lst.Next())
+			// если ключ совпал, обновить данные и выйти
+			if (lst.Data() == key)
+			{
+				current = &lst.Data();
+				return;
+			}
+	}
 	lst.InsertRear(key);
 	current = &lst.Data();
 }
@@ -78,16 +78,15 @@ int HashTable<T>::Find(const T& key)
 	LinkedList<T>& lst = buckets[hashval];
 
 	// просматривать узлы связаного списка в поиска key
-		for (lst.Reset(); !lst.EndOfList(); lst.Next())
+	for (lst.Reset(); !lst.EndOfList(); lst.Next())
+		if (lst.Data() == key)
 		{
-			if (lst.Data() == key)
-			{
-				current = &lst.Data();
-				return 1;					// вернуть true
-			}
-			return 0;						// иначе вернуть false
+			current = &lst.Data();
+			return 1;					// вернуть true
 		}
+	return 0;						// иначе вернуть false
 }
+
 template <class T>
 void HashTable<T>::Delete(const T& key)
 {
@@ -122,11 +121,13 @@ void HashTable<T>::Update(const T& key) {
 		if (lst.Data() == key)
 		{
 			current = &lst.Data();
+			lst.Data() = key;
 			return;
 		}
 	}
 }
 
 template<class T>
-HashTable<T>::HashTable(int nbucket, unsigned long (*hashf)(T)) : List<T>(), numBuckets{ nbucket }, hf{ hashf } {
+HashTable<T>::HashTable(int nbucket, unsigned long (*hashf)(T)) : List<T>(), numBuckets{ nbucket }, hf{ hashf }, buckets{nbucket}{
+	current = NULL;
 }

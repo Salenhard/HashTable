@@ -1,3 +1,2 @@
 ﻿  HashTableLab.cpp
-C:\Users\Александр\source\repos\HashTable\HashTable\HashTable.h(90): warning C4715: HashTable<NameRecord>::Find: значение возвращается не при всех путях выполнения
-  HashTable.vcxproj -> C:\Users\Александр\source\repos\HashTable\x64\Debug\HashTableLab.exe
+  HashTable.vcxproj -> C:\Users\gurba\source\repos\HashTable\x64\Debug\HashTableLab.exe

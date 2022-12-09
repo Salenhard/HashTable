@@ -64,7 +64,7 @@ void HashTableIterator<T>::Next() {
 	if (currBucketPtr->EndOfList())
 		SearchNextNode(++currentBucket);
 
-	// установить флажок iterationComlpete, если непустых список
+	// установить флажок iterationComlpete, если непустых списков
 	// больше нет
 	this->iterationComplete = currentBucket == -1;
 }
@@ -72,7 +72,7 @@ void HashTableIterator<T>::Next() {
 
 template<class T>
 T& HashTableIterator<T>::Data() {
-	if (currBucketPtr == NULL) {
+	if (currBucketPtr == nullptr) {
 		cout << "Data: Ошибка указатель пустой";
 		exit(1);
 	}
@@ -93,6 +93,5 @@ void HashTableIterator<T>::SetList(HashTable<T>& lst) {
 // SearchNextNode идентифицирует первый непустой блок в таблице
 template<class T>
 HashTableIterator<T>::HashTableIterator(HashTable<T>& hf) : Iterator<T>(), hashTable{ &hf } {
-
 	SearchNextNode(0);
 };

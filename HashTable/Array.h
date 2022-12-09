@@ -8,7 +8,6 @@ enum ErrorType
 	invalidArraysize, memoryAllocationError, indexOutOfRange
 };
 
-
 const char* errorMsg[] = {
 	"Неверный разыер массива", "Ошибка выделения nамяти", "Неверный индекс: "
 };
@@ -68,7 +67,7 @@ Array<T>::Array(int sz) {
 	for (int i = 0; i < sz; i++)
 		alist[i] = T();
 	// убеждаемся в том, что система выделяет необходимую память,
-	if (alist == NULL) 
+	if (alist == nullptr) 
 		Error(memoryAllocationError);
 }
 
@@ -87,7 +86,7 @@ Array<T>::Array(const Array<T>& X) {
 	// выделить новую память дпя объекта с проверкой 
 	// возможных ошибок
 	alist = new T[n];
-	if (alist == NULL)
+	if (alist == nullptr)
 		Error(memoryAllocationError);
 
 	// колировать элементы массива объекта Х в текупо,�й объект
@@ -107,7 +106,7 @@ Array<T>& Array<T>::operator=(const Array<T>& rhs)
 	// выделить новую память дпя объекта с проверкой 
 	// возможных ошибок
 	alist = new T[n];
-	if (alist == NULL)
+	if (alist == nullptr)
 		Error(memoryAllocationError);
 
 	// колировать элементы массива объекта Х в текупо,�й объект
@@ -155,7 +154,7 @@ void Array<T>::Resize(int sz) {
 
 	// запросить память для нового массива и проверить ответ систеNЫ
 	T* newlist = new T[sz]; 
-	if (newlist == NULL)
+	if (newlist == nullptr)
 		Error(memoryAllocationError);
 
 	// ооъявить n и инициализировать значением sz или зize 
